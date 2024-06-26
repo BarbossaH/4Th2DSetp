@@ -26,6 +26,9 @@ public class PlayerCharacter : MonoBehaviour
     private bool isJumping;
     private bool canJump;
     public PlayerStatus currentStatus = PlayerStatus.Idle;
+
+    private Transform cameraFollowTarget;
+    public Vector3 followOffset;
     #endregion
 
     #region periodic methods
@@ -34,6 +37,8 @@ public class PlayerCharacter : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+        cameraFollowTarget = transform.Find("TargetForCamera");
+        cameraFollowTarget.position = transform.position + followOffset;
     }
 
     private void Update()
@@ -46,6 +51,7 @@ public class PlayerCharacter : MonoBehaviour
 
         CheckIsJumping();
         UpdateAnimation();
+        UpdateTargetPosition();
     }
 
     private void UpdateHorizontalMovement()
@@ -138,6 +144,19 @@ public class PlayerCharacter : MonoBehaviour
         if (PlayerInput.instance.Vertical.value < 0 && !isJumping)
         {
             currentStatus = PlayerStatus.Crouch;
+        }
+    }
+
+    //update target position
+    private void UpdateTargetPosition()
+    {
+        if (spriteRenderer.flipX)
+        {
+            cameraFollowTarget.position = Vector3.MoveTowards(cameraFollowTarget.position, transform.position - followOffset, 0.05f);
+        }
+        else
+        {
+            cameraFollowTarget.position = Vector3.MoveTowards(cameraFollowTarget.position, transform.position + followOffset, 0.05f);
         }
     }
     #endregion

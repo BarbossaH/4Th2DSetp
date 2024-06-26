@@ -17,7 +17,6 @@ public class InputAxis
   {
     if (Input.GetKey(k1))
     {
-      Debug.Log(123);
       value = -1; //left or down
       return;
     }
