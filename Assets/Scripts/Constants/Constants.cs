@@ -10,4 +10,5 @@ public class Constants
     public const string Anim_IsRun = "isRun";
     public const string Anim_IsJump = "isJump";
     public const string Anim_IsCrouch = "isCrouch";
+    public const string Anim_TriggerFall = "triggerFall";
 }

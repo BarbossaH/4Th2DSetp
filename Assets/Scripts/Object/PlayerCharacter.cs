@@ -23,12 +23,14 @@ public class PlayerCharacter : MonoBehaviour
 
     float timeY = 0;
 
-    private bool isJumping;
+    private bool isGround;
     private bool canJump;
     public PlayerStatus currentStatus = PlayerStatus.Idle;
 
     private Transform cameraFollowTarget;
     public Vector3 followOffset;
+
+    PassPlatform currentPlatform;
     #endregion
 
     #region periodic methods
@@ -59,10 +61,26 @@ public class PlayerCharacter : MonoBehaviour
         SetPeedX(PlayerInput.instance.Horizontal.value * speedX);
     }
     #endregion
+
+    #region trigger events
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        // Debug.Log($"Collision{other.gameObject.name}");
+
+        currentPlatform = other.gameObject.GetComponent<PassPlatform>();
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        // Debug.Log("trigger");
+        currentPlatform = null;
+    }
+
+    #endregion
     #region private methods
     private void UpdateJump()
     {
-        if (PlayerInput.instance.Jump.isDown && !isJumping)
+        if (PlayerInput.instance.Jump.isDown && isGround)
         {
             timeY = 0;
             canJump = true;
@@ -90,7 +108,7 @@ public class PlayerCharacter : MonoBehaviour
     }
     private void UpdateAnimation()
     {
-        anim.SetBool(Constants.Anim_IsJump, isJumping);
+        anim.SetBool(Constants.Anim_IsJump, !isGround);
         anim.SetBool(Constants.Anim_IsCrouch, PlayerInput.instance.Vertical.value < 0);
     }
     private void SetPeedX(float x)
@@ -121,13 +139,13 @@ public class PlayerCharacter : MonoBehaviour
     {
         RaycastHit2D hit2D = Physics2D.Raycast(transform.position, Vector3.down, checkDistance, 1 << 8);
         // RaycastHit2D hit2D = Physics2D.Raycast(transform.position, Vector3.down, 1, 8);
-        isJumping = !hit2D;
+        isGround = hit2D;
         Debug.DrawLine(transform.position, transform.position + Vector3.down * checkDistance, Color.red);
-        if (hit2D)
-        {
-            // Debug.Log("Detecting game object:" + hit2D.rigidbody.gameObject.name);
-            // Debug.Log("Detecting game object:" + hit2D.transform.gameObject.name);
-        }
+        // if (hit2D)
+        // {
+        //     // Debug.Log("Detecting game object:" + hit2D.rigidbody.gameObject.name);
+        //     // Debug.Log("Detecting game object:" + hit2D.transform.gameObject.name);
+        // }
     }
 
     public void CheckPlayerStatus()
@@ -137,13 +155,26 @@ public class PlayerCharacter : MonoBehaviour
         {
             currentStatus = PlayerStatus.Run;
         }
-        if (isJumping)
+        if (!isGround)
         {
             currentStatus = PlayerStatus.Jump;
         }
-        if (PlayerInput.instance.Vertical.value < 0 && !isJumping)
+        if (PlayerInput.instance.Vertical.value < 0 && isGround)
         {
             currentStatus = PlayerStatus.Crouch;
+        }
+        //to check player can jump down from the passthrough platform
+        if (PlayerInput.instance.Vertical.value == -1 && isGround
+        && PlayerInput.instance.Jump.isDown)
+        {
+            //fall
+            // Debug.Log(PlayerInput.instance.Jump.isDown);
+
+            if (currentPlatform != null)
+            {
+                currentPlatform.Fall(gameObject);
+                anim.SetTrigger(Constants.Anim_TriggerFall);
+            }
         }
     }
 
