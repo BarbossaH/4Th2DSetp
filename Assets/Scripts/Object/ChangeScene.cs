@@ -5,12 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class ChangeScene : MonoBehaviour
 {
+    public int targetScene;
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player")
         {
-            Debug.Log("changeScene");
-            // SceneManager.LoadSceneAsync();
+            // Debug.Log("changeScene");
+            SceneController.Instance.LoadSceneAsync(targetScene);
         }
     }
 }

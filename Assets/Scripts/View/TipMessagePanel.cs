@@ -8,23 +8,24 @@ public enum TipStyle
 {
     Style1 = 0,// located at the bottom of the screen
 }
-public class TipMessagePanel : MonoBehaviour
+public class TipMessagePanel : SingletonView<TipMessagePanel>
 {
     #region fields
     //instructor said this UI would be used in several places, so it should be deigned as a singleton
-    public static TipMessagePanel _instance;
     GameObject styleObj_1;
     #endregion
 
     #region periodic methods
-    private void Awake()
+    protected override void Init()
     {
-        //because the game object is set to be active in the editor, but in the code, it is set to inactive. So actually, this Awake method is called first when it is set to inactive in start method.
-        _instance = this;
+        // styleObj_1 = transform.Find("Style_Down").gameObject;
+        // styleObj_1.SetActive(false);
+
     }
     private void Start()
     {
         styleObj_1 = transform.Find("Style_Down").gameObject;
+
         styleObj_1.SetActive(false);
     }
     #endregion

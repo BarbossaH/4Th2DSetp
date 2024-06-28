@@ -18,7 +18,7 @@ public class InfoSign : MonoBehaviour
         {
             // Debug.Log(other.name);
             spriteRenderer.sprite = highlightedSprite;
-            TipMessagePanel._instance.ShowTip(text);
+            TipMessagePanel.Instance.ShowTip(text);
         }
     }
 
@@ -26,9 +26,8 @@ public class InfoSign : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            // Debug.Log(other.name);
             spriteRenderer.sprite = normalSprite;
-            TipMessagePanel._instance.HideTip();
+            TipMessagePanel.Instance.HideTip();
         }
     }
 }
