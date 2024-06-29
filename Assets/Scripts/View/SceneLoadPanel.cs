@@ -7,10 +7,15 @@ public class SceneLoadPanel : SingletonView<SceneLoadPanel>
 {
   private Slider slider_process;
   private AsyncOperation currentOperation;
+  protected override void Awake()
+  {
+    base.Awake();
+    DontDestroyOnLoad(gameObject);
+  }
   private void Start()
   {
-    // Slider slider_process1 = transform.Find("Slider").GetComponent<Slider>();
-    slider_process = transform.GetComponentInChildren<Slider>();
+
+    slider_process = transform.Find("bg/Slider").GetComponent<Slider>();
     // Debug.Log(slider_process1 == slider_process); //true
   }
   private void Update()
@@ -27,7 +32,8 @@ public class SceneLoadPanel : SingletonView<SceneLoadPanel>
     slider_process.value = process;
     if (process >= 1)
     {
-      this.Hide();
+      // this.Hide();
+      Invoke("Hide", 1);
     }
   }
   public void UpdateLoadProcess(AsyncOperation operation)

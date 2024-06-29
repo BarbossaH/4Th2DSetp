@@ -11,16 +11,7 @@ public class SingletonView<T> : ViewBase where T : SingletonView<T>
     {
         get
         {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<T>();
-                if (_instance == null)
-                {
-                    GameObject singletonObject = new GameObject(typeof(T).Name);
-                    _instance = singletonObject.AddComponent<T>(); //add the script to the object;
-                }
-                _instance.Init();
-            }
+            //齐老师的办法是单例就是一个管理类，只需把脚本挂在一个物体上即可；但是这里却是单例是一套物体，包含父子各种关系，所以就不适用齐老师的manager管理的单例。这是界面的单例。我这还是头一回这么用，因为实际上unity是单独加载了场景，所以我想正确的做法可能就是给loading界面放在一个场景里，单独加载。但是怎么传入进度条呢？mike的案例是做一个渐入渐出的动画，这显然是不是真实项目的做法。
             return _instance;
         }
     }
@@ -35,8 +26,6 @@ public class SingletonView<T> : ViewBase where T : SingletonView<T>
             Destroy(gameObject);
         }
     }
-
-    protected virtual void Init() { }
 
     private void OnApplicationQuit()
     {

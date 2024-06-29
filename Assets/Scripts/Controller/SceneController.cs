@@ -24,10 +24,14 @@ public class SceneController
   AsyncOperation operation = null;
   public void LoadSceneAsync(int targetIndex)
   {
-
-    //then load the scene
+    if (SceneLoadPanel.Instance == null)
+    {
+      GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/View/LoadScenePanel"));
+    }
+    // then load the scene
     operation = SceneManager.LoadSceneAsync(targetIndex);
-    //show a loading interface
+    // show a loading interface
+
     SceneLoadPanel.Instance.UpdateLoadProcess(operation);
 
   }
