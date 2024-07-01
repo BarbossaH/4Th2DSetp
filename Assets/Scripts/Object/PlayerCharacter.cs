@@ -58,7 +58,8 @@ public class PlayerCharacter : MonoBehaviour
 
     private void UpdateHorizontalMovement()
     {
-        SetPeedX(PlayerInput.instance.Horizontal.value * speedX);
+        // if()
+        SetPeedX(PlayerInput.instance.isEnabled ? PlayerInput.instance.Horizontal.value * speedX : 0);
     }
     #endregion
 

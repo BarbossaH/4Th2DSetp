@@ -28,7 +28,7 @@ public class SceneLoadPanel : SingletonView<SceneLoadPanel>
   }
   private void UpdateLoadProcess(float process)
   {
-    Show();
+    // Debug.Log(999);
     slider_process.value = process;
     if (process >= 1)
     {
@@ -38,12 +38,15 @@ public class SceneLoadPanel : SingletonView<SceneLoadPanel>
   }
   public void UpdateLoadProcess(AsyncOperation operation)
   {
+    Show();
     currentOperation = operation;
+
   }
 
   public override void Hide()
   {
     base.Hide();
+    slider_process.value = 0;
     currentOperation = null;
   }
 }
