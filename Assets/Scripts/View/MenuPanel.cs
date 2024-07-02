@@ -14,6 +14,7 @@ public class MenuPanel : ViewBase
     public void OnStartGameClick()
     {
         //TODO
+        SceneController.Instance.LoadSceneAsync(1);
     }
     public void OnOptionClick()
     {

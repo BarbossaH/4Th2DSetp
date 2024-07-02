@@ -6,12 +6,21 @@ using UnityEngine.SceneManagement;
 public class ChangeScene : MonoBehaviour
 {
     public int targetScene;
+    public string spawnPosName;
+    public string objName;
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player")
         {
-            // Debug.Log("changeScene");
-            SceneController.Instance.LoadSceneAsync(targetScene);
+            if (string.IsNullOrEmpty(spawnPosName) || string.IsNullOrEmpty(objName))
+            {
+                SceneController.Instance.LoadSceneAsync(targetScene);
+
+            }
+            else
+            {
+                SceneController.Instance.LoadSceneAsync(targetScene, objName, spawnPosName);
+            }
         }
     }
 }

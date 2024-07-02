@@ -33,7 +33,7 @@ public class SceneLoadPanel : SingletonView<SceneLoadPanel>
     if (process >= 1)
     {
       // this.Hide();
-      Invoke("Hide", 1);
+      Invoke("Hide", 0.5f);
     }
   }
   public void UpdateLoadProcess(AsyncOperation operation)

@@ -13,7 +13,7 @@ public class PassPlatform : MonoBehaviour
     }
     public void Fall(GameObject target)
     {
-        //取消碰撞层
+        //取消碰撞层. temporarily remove a specific layer from the collision mask of a "PlatformEffector2D" and then restore it after a delay.
         layer = 1 << target.layer;
         // Debug.Log($"this layer is {layer}");
         effector.colliderMask &= ~layer;

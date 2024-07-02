@@ -6400,8 +6400,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6573861356917736251, guid: 5cdad582c2d644b60a6088128c343b11, type: 3}
+      propertyPath: objName
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6573861356917736251, guid: 5cdad582c2d644b60a6088128c343b11, type: 3}
       propertyPath: targetScene
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6573861356917736251, guid: 5cdad582c2d644b60a6088128c343b11, type: 3}
+      propertyPath: spawnPosName
+      value: SpawnPos2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21380,7 +21388,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 217842016743072036, guid: 8a47a47e0366e4e04b3554add6a2662f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6455489468338116752, guid: 8a47a47e0366e4e04b3554add6a2662f, type: 3}
       propertyPath: m_LocalPosition.x
