@@ -31,6 +31,8 @@ public class PlayerCharacter : MonoBehaviour
     public Vector3 followOffset;
 
     PassPlatform currentPlatform;
+
+    Damageable playerDamageable;
     #endregion
 
     #region periodic methods
@@ -41,6 +43,27 @@ public class PlayerCharacter : MonoBehaviour
         anim = GetComponent<Animator>();
         cameraFollowTarget = transform.Find("TargetForCamera");
         cameraFollowTarget.position = transform.position + followOffset;
+
+        playerDamageable = GetComponent<Damageable>();
+        playerDamageable.OnDie += OnPlayerDie;
+        playerDamageable.OnGetHurt += OnPlayerGetHurt;
+
+        GamePaneL.Instance.InitHP(playerDamageable.health);
+    }
+
+    private void OnPlayerGetHurt()
+    {
+        //play the death animation
+        anim.SetTrigger(Constants.Anim_TriggerHurt);
+        GamePaneL.Instance.UpdateHp(playerDamageable.health);
+
+        //refresh UI
+        // Debug.Log("GetHurt called");
+    }
+
+    private void OnPlayerDie()
+    {
+        GamePaneL.Instance.UpdateHp(playerDamageable.health);
     }
 
     private void Update()

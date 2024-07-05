@@ -10,7 +10,7 @@ public class Damageable : MonoBehaviour
     public int health;
 
     public Action OnGetHurt;
-    public Action onDie;
+    public Action OnDie;
 
     public void TakeDamage(int damage)
     {
@@ -22,7 +22,7 @@ public class Damageable : MonoBehaviour
         health--;
         if (health <= 0)
         {
-            OnGetHurt?.Invoke();
+            OnDie?.Invoke();
             // if (onDie != null)
             // {
             //     onDie();
