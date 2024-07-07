@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public enum PlayerStatus
 {
@@ -33,12 +35,16 @@ public class PlayerCharacter : MonoBehaviour
     PassPlatform currentPlatform;
 
     Damageable playerDamageable;
+
+    private float gravityScale;
+    private string playerSpawnLocation;
     #endregion
 
     #region periodic methods
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        gravityScale = rb.gravityScale;
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         cameraFollowTarget = transform.Find("TargetForCamera");
@@ -47,21 +53,67 @@ public class PlayerCharacter : MonoBehaviour
         playerDamageable = GetComponent<Damageable>();
         playerDamageable.OnDie += OnPlayerDie;
         playerDamageable.OnGetHurt += OnPlayerGetHurt;
-
+        //if InitHp method is called here, there is a potential problem that if the Start method is called before the one inGamePanel, the variable parent won't be found because its start method isn't called yet. So the solution is to call the method of finding the parent in the Awake method in GamePanel class.
         GamePaneL.Instance.InitHP(playerDamageable.health);
     }
 
-    private void OnPlayerGetHurt()
+    private void OnPlayerGetHurt(HurtType type, string pos)
     {
-        //play the death animation
-        anim.SetTrigger(Constants.Anim_TriggerHurt);
-        GamePaneL.Instance.UpdateHp(playerDamageable.health);
+        playerSpawnLocation = pos;
+        switch (type)
+        {
+            case HurtType.Normal:
+                anim.SetTrigger(Constants.Anim_TriggerHurt);
+                SetInvulnerability(1.5f);
+                break;
+            case HurtType.Deadly:
+                //play the death animation
 
+                SetPlayerDeadState();
+                Invoke("ResetPlayerDeadState", 2);
+                //reset the player's position
+                break;
+        }
+        //play the death animation
+
+
+        GamePaneL.Instance.UpdateHp(playerDamageable.health);
         //refresh UI
         // Debug.Log("GetHurt called");
     }
+    private void SetPlayerDeadState()
+    {
+        anim.SetBool(Constants.Anim_IsDead, true);
+        rb.gravityScale = 0;
+        rb.velocity = Vector2.zero;
+        PlayerInput.instance.SetEnableInput(false);
 
-    private void OnPlayerDie()
+    }
+
+    private void ResetPlayerDeadState()
+    {
+        anim.SetBool(Constants.Anim_IsDead, false);
+        rb.gravityScale = gravityScale;
+        PlayerInput.instance.SetEnableInput(true);
+        SetInvulnerability(3f);
+        //set player position
+        transform.position = GameObject.Find(playerSpawnLocation).transform.position;
+    }
+
+    private void SetInvulnerability(float duration)
+    {
+        anim.SetBool(Constants.Anim_IsInvulnerable, true);
+        playerDamageable.DisableDamage();
+        Invoke("ResetDamageAble", duration);
+    }
+    private void ResetDamageAble()
+    {
+        Debug.Log("Invulnerable finished");
+        playerDamageable.EnableDamage();
+        anim.SetBool(Constants.Anim_IsInvulnerable, false);
+    }
+
+    private void OnPlayerDie(HurtType type, string pos)
     {
         GamePaneL.Instance.UpdateHp(playerDamageable.health);
     }

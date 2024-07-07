@@ -12,8 +12,9 @@ public class GamePaneL : SingletonView<GamePaneL>
     public int HP;
     // in real project ,we won't set a UI as singleton.
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
         parent = transform.Find("HP");
 
     }

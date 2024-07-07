@@ -9,20 +9,34 @@ public class Damageable : MonoBehaviour
 
     public int health;
 
-    public Action OnGetHurt;
-    public Action OnDie;
+    public Action<HurtType, string> OnGetHurt;
+    public Action<HurtType, string> OnDie;
 
-    public void TakeDamage(int damage)
+    private bool isEnabled = true;
+
+    public void EnableDamage()
+    {
+        isEnabled = true;
+    }
+
+    public void DisableDamage()
+    {
+        isEnabled = false;
+    }
+
+    public void TakeDamage(int damage, HurtType type, string position)
     {
         /* Here, many game objects will mount this script, such as player, pillars, walls, and monsters,
         so this script cannot tell which object calls this method until it's called. So we need to use
         event handlers to deal with this situation.
         */
         //reduce the health value by the damage
+        if (!isEnabled) return;
+
         health--;
         if (health <= 0)
         {
-            OnDie?.Invoke();
+            OnDie?.Invoke(type, position);
             // if (onDie != null)
             // {
             //     onDie();
@@ -30,7 +44,7 @@ public class Damageable : MonoBehaviour
         }
         else
         {
-            OnGetHurt?.Invoke();
+            OnGetHurt?.Invoke(type, position);
             // if (OnGetHurt != null)
             // {
             //     OnGetHurt();

@@ -2,10 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum HurtType
+{
+    Normal = 0,
+    Deadly
+}
+
 public class Damage : MonoBehaviour
 {
     public int damage;
-
+    public HurtType hurtType;
+    public string resetPosition;
     public void OnDamage(GameObject[] objects)
     {
         foreach (var obj in objects)
@@ -19,7 +26,7 @@ public class Damage : MonoBehaviour
         Damageable damageable = obj.GetComponent<Damageable>();
         if (damageable != null)
         {
-            damageable.TakeDamage(damage);
+            damageable.TakeDamage(damage, hurtType, resetPosition);
         }
     }
 }
