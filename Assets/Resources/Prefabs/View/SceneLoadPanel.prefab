@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8173609727450702575}
   - component: {fileID: 380581265777546354}
   m_Layer: 5
-  m_Name: LoadScenePanel
+  m_Name: SceneLoadPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

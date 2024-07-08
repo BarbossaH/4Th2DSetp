@@ -54,7 +54,7 @@ public class PlayerCharacter : MonoBehaviour
         playerDamageable.OnDie += OnPlayerDie;
         playerDamageable.OnGetHurt += OnPlayerGetHurt;
         //if InitHp method is called here, there is a potential problem that if the Start method is called before the one inGamePanel, the variable parent won't be found because its start method isn't called yet. So the solution is to call the method of finding the parent in the Awake method in GamePanel class.
-        GamePaneL.Instance.InitHP(playerDamageable.health);
+        GamePanel.Instance.InitHP(playerDamageable.health);
     }
 
     private void OnPlayerGetHurt(HurtType type, string pos)
@@ -70,14 +70,15 @@ public class PlayerCharacter : MonoBehaviour
                 //play the death animation
 
                 SetPlayerDeadState();
-                Invoke("ResetPlayerDeadState", 2);
+                Invoke("ResetPlayerDeadState", 1);
+
                 //reset the player's position
                 break;
         }
         //play the death animation
 
 
-        GamePaneL.Instance.UpdateHp(playerDamageable.health);
+        GamePanel.Instance.UpdateHp(playerDamageable.health);
         //refresh UI
         // Debug.Log("GetHurt called");
     }
@@ -87,7 +88,7 @@ public class PlayerCharacter : MonoBehaviour
         rb.gravityScale = 0;
         rb.velocity = Vector2.zero;
         PlayerInput.instance.SetEnableInput(false);
-
+        TipMessagePanel.Instance.ShowTip(null, TipStyle.Style2);
     }
 
     private void ResetPlayerDeadState()
@@ -115,7 +116,7 @@ public class PlayerCharacter : MonoBehaviour
 
     private void OnPlayerDie(HurtType type, string pos)
     {
-        GamePaneL.Instance.UpdateHp(playerDamageable.health);
+        GamePanel.Instance.UpdateHp(playerDamageable.health);
     }
 
     private void Update()
