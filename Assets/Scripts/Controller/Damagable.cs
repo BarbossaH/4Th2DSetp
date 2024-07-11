@@ -12,16 +12,16 @@ public class Damageable : MonoBehaviour
     public Action<HurtType, string> OnGetHurt;
     public Action<HurtType, string> OnDie;
 
-    private bool isEnabled = true;
+    private bool isDamageEnabled = true;
 
     public void EnableDamage()
     {
-        isEnabled = true;
+        isDamageEnabled = true;
     }
 
     public void DisableDamage()
     {
-        isEnabled = false;
+        isDamageEnabled = false;
     }
 
     public void TakeDamage(int damage, HurtType type, string position)
@@ -31,7 +31,9 @@ public class Damageable : MonoBehaviour
         event handlers to deal with this situation.
         */
         //reduce the health value by the damage
-        if (!isEnabled) return;
+        if (!isDamageEnabled) return;
+
+        if (health < 0) return;
 
         health--;
         if (health <= 0)
@@ -53,5 +55,11 @@ public class Damageable : MonoBehaviour
         //play the injury animation
 
         //check if the object is dead when its health is lower than 0
+    }
+
+    public void ResetHealth()
+    {
+        health = 2;
+        EnableDamage();
     }
 }

@@ -8,6 +8,7 @@ public enum TipStyle
 {
     Style1 = 0,// located at the bottom of the screen
     Style2, //
+    Style3, //
 }
 public class TipMessagePanel : SingletonView<TipMessagePanel>
 {
@@ -15,6 +16,7 @@ public class TipMessagePanel : SingletonView<TipMessagePanel>
     //instructor said this UI would be used in several places, so it should be deigned as a singleton
     GameObject styleObj_1;
     GameObject styleObj_2;
+    GameObject styleObj_3;
 
     #endregion
 
@@ -27,6 +29,8 @@ public class TipMessagePanel : SingletonView<TipMessagePanel>
         styleObj_1.SetActive(false);
         styleObj_2 = transform.Find("Style_2").gameObject;
         styleObj_2.SetActive(false);
+        styleObj_3 = transform.Find("Style_3").gameObject;
+        styleObj_3.SetActive(false);
     }
 
 
@@ -43,6 +47,10 @@ public class TipMessagePanel : SingletonView<TipMessagePanel>
                 styleObj_2.SetActive(true);
                 Invoke("HideStyle2", 1.5f);
                 break;
+            case TipStyle.Style3:
+                styleObj_3.SetActive(true);
+                Invoke("HideStyle3", 1.5f);
+                break;
         }
     }
 
@@ -57,11 +65,18 @@ public class TipMessagePanel : SingletonView<TipMessagePanel>
             case TipStyle.Style2:
                 styleObj_2.SetActive(false);
                 break;
+            case TipStyle.Style3:
+                styleObj_3.SetActive(false);
+                break;
         }
     }
 
     private void HideStyle2()
     {
         HideTip(TipStyle.Style2);
+    }
+    private void HideStyle3()
+    {
+        HideTip(TipStyle.Style3);
     }
 }

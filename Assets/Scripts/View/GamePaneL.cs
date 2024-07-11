@@ -41,4 +41,12 @@ public class GamePanel : SingletonView<GamePanel>
       }
     }
   }
+
+  public void ResetHP()
+  {
+    for (int i = 0; i < hp_icons.Length; i++)
+    {
+      hp_icons[i].GetComponent<Toggle>().isOn = true;
+    }
+  }
 }

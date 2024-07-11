@@ -96,7 +96,7 @@ public class PlayerCharacter : MonoBehaviour
         anim.SetBool(Constants.Anim_IsDead, false);
         rb.gravityScale = gravityScale;
         PlayerInput.instance.SetEnableInput(true);
-        SetInvulnerability(3f);
+        SetInvulnerability(1f);
         //set player position
         transform.position = GameObject.Find(playerSpawnLocation).transform.position;
     }
@@ -109,16 +109,26 @@ public class PlayerCharacter : MonoBehaviour
     }
     private void ResetDamageAble()
     {
-        Debug.Log("Invulnerable finished");
+        // Debug.Log("Invulnerable finished");
         playerDamageable.EnableDamage();
         anim.SetBool(Constants.Anim_IsInvulnerable, false);
     }
 
     private void OnPlayerDie(HurtType type, string pos)
     {
+        SetPlayerDeadState();
+        playerDamageable.DisableDamage();
         GamePanel.Instance.UpdateHp(playerDamageable.health);
+        Invoke("DelayShowTip", 1);
     }
-
+    private void DelayShowTip()
+    {
+        TipMessagePanel.Instance.ShowTip(null, TipStyle.Style3);
+        playerSpawnLocation = "Spawn1";
+        ResetPlayerDeadState();
+        playerDamageable.ResetHealth();
+        GamePanel.Instance.ResetHP();
+    }
     private void Update()
     {
         CheckPlayerStatus();
@@ -135,7 +145,7 @@ public class PlayerCharacter : MonoBehaviour
     private void UpdateHorizontalMovement()
     {
         // if()
-        SetPeedX(PlayerInput.instance.isEnabled ? PlayerInput.instance.Horizontal.value * speedX : 0);
+        SetPeedX(PlayerInput.instance.isInputEnabled ? PlayerInput.instance.Horizontal.value * speedX : 0);
     }
     #endregion
 

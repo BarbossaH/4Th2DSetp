@@ -14,7 +14,7 @@ public class PlayerInput : MonoBehaviour
   public InputAxis Horizontal = new InputAxis(KeyCode.A, KeyCode.D);
   public InputAxis Vertical = new InputAxis(KeyCode.S, KeyCode.W);
 
-  public bool isEnabled = true;
+  public bool isInputEnabled = true;
 
   #region periodic methods
   private void Awake()
@@ -29,7 +29,7 @@ public class PlayerInput : MonoBehaviour
 
   private void Update()
   {
-    if (isEnabled)
+    if (isInputEnabled)
     {
       Pause.Get();
       Attack.Get();
@@ -48,6 +48,6 @@ public class PlayerInput : MonoBehaviour
 
   public void SetEnableInput(bool enable)
   {
-    isEnabled = enable;
+    isInputEnabled = enable;
   }
 }
