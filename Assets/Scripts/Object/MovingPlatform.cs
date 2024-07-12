@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum MoveStyle
+{
+    LeftAndRight = 0,
+    UpAndDown = 1,
+}
 public class MovingPlatform : MonoBehaviour
 {
     public Vector3 startPos;
     public Vector3 endPos;
-
+    public MoveStyle moveStyle;
     public float speed = 1f;
 
     public bool isMoveToEnd = true;
@@ -23,14 +27,28 @@ public class MovingPlatform : MonoBehaviour
 
     private void FollowObject()
     {
+
         int count = rb.GetContacts(contactFilter, contactPoints);
         for (int i = 0; i < count; i++)
         {
-            contactPoints[i].rigidbody.velocity += new Vector2(isMoveToEnd ? speed : -speed, 0);
+            contactPoints[i].rigidbody.velocity += GetFollowVelocity();
+            // contactPoints[i].rigidbody.velocity += new Vector2(isMoveToEnd ? speed : -speed, 0); ;
         }
     }
-
-    private void Update()
+    private Vector2 GetFollowVelocity()
+    {
+        Vector2 followVelocity = Vector2.zero;
+        if (moveStyle == MoveStyle.LeftAndRight)
+        {
+            followVelocity = new Vector2(isMoveToEnd ? speed : -speed, 0);
+        }
+        else
+        {
+            followVelocity = new Vector2(0, isMoveToEnd ? 0 : -speed);
+        }
+        return followVelocity;
+    }
+    private void FixedUpdate()
     {
         if (isMoveToEnd)
         {

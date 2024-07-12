@@ -5,7 +5,7 @@ public class InputButton
   public KeyCode keyCode;
   public bool isDown;
   public bool isUp;
-  public bool isPressed;
+  public bool isHolding;
 
   public InputButton(KeyCode keyCode)
   {
@@ -16,6 +16,6 @@ public class InputButton
   {
     isDown = Input.GetKeyDown(keyCode);
     isUp = Input.GetKeyUp(keyCode);
-    isPressed = Input.GetKey(keyCode);
+    isHolding = Input.GetKey(keyCode);
   }
 }

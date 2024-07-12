@@ -2,26 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneController
+public class SceneController : Singleton<SceneController>
 {
-  private static SceneController _instance;
-
-  private SceneController()
-  {
-  }
-  public static SceneController Instance
-  {
-    get
-    {
-      if (_instance == null)
-      {
-        _instance = new SceneController();
-      }
-
-      return _instance;
-    }
-  }
-
   AsyncOperation operation = null;
   public void LoadSceneAsync(int targetIndex)
   {
@@ -53,11 +35,14 @@ public class SceneController
 
   public void LoadSceneAsync(int targetIndex, string objName, string posName)
   {
+    //这里的风险就是在手动输入对应的objname和posname的时候容易出错。我想不会这么输入或者有一个规范，我这里很乱。
     LoadSceneAsync(targetIndex, (asyncOperation) =>
     {
-      GameObject gameObject = GameObject.Find(objName);
+      GameObject obj = GameObject.Find(objName);
+      // Debug.Log(posName);
       GameObject targetObject = GameObject.Find(posName);
-      gameObject.transform.position = targetObject.transform.position;
+
+      obj.transform.position = targetObject.transform.position;
     });
   }
 }

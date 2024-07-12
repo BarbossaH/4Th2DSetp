@@ -7,7 +7,7 @@ public class PlayerInput : MonoBehaviour
   public static PlayerInput instance;
 
   public InputButton Pause = new InputButton(KeyCode.Escape);
-  public InputButton Attack = new InputButton(KeyCode.J);
+  public InputButton Melee = new InputButton(KeyCode.J);
   public InputButton Shoot = new InputButton(KeyCode.U);
   public InputButton Jump = new InputButton(KeyCode.K);
 
@@ -32,7 +32,7 @@ public class PlayerInput : MonoBehaviour
     if (isInputEnabled)
     {
       Pause.Get();
-      Attack.Get();
+      Melee.Get();
       Shoot.Get();
       Jump.Get();
       Horizontal.Get();

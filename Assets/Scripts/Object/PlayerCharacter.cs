@@ -13,6 +13,11 @@ public enum PlayerStatus
     Run,
     Crouch
 }
+public enum AttackType
+{
+    MeleeAttack,
+    RangeAttack
+}
 public class PlayerCharacter : MonoBehaviour
 {
     //不能直接修改角色的坐标position，因为直接修改坐标是没有经过物理碰撞的计算的
@@ -38,6 +43,9 @@ public class PlayerCharacter : MonoBehaviour
 
     private float gravityScale;
     private string playerSpawnLocation;
+
+    float attackColdDownDuration = 1f;
+    bool canAttack = true;
     #endregion
 
     #region periodic methods
@@ -132,11 +140,8 @@ public class PlayerCharacter : MonoBehaviour
     private void Update()
     {
         CheckPlayerStatus();
-
         UpdateHorizontalMovement();
-
         UpdateJump();
-
         CheckIsJumping();
         UpdateAnimation();
         UpdateTargetPosition();
@@ -144,7 +149,6 @@ public class PlayerCharacter : MonoBehaviour
 
     private void UpdateHorizontalMovement()
     {
-        // if()
         SetPeedX(PlayerInput.instance.isInputEnabled ? PlayerInput.instance.Horizontal.value * speedX : 0);
     }
     #endregion
@@ -172,7 +176,7 @@ public class PlayerCharacter : MonoBehaviour
             timeY = 0;
             canJump = true;
         }
-        if (PlayerInput.instance.Jump.isPressed && canJump)
+        if (PlayerInput.instance.Jump.isHolding && canJump)
         {
             timeY += Time.deltaTime;
             if (timeY >= 0.2f)
@@ -263,6 +267,14 @@ public class PlayerCharacter : MonoBehaviour
                 anim.SetTrigger(Constants.Anim_TriggerFall);
             }
         }
+        if (PlayerInput.instance.Melee.isDown || PlayerInput.instance.Melee.isHolding)
+        {
+            Attack(AttackType.MeleeAttack);
+        }
+        if (PlayerInput.instance.Shoot.isDown || PlayerInput.instance.Shoot.isHolding)
+        {
+            Attack(AttackType.RangeAttack);
+        }
     }
 
     //update target position
@@ -276,6 +288,30 @@ public class PlayerCharacter : MonoBehaviour
         {
             cameraFollowTarget.position = Vector3.MoveTowards(cameraFollowTarget.position, transform.position + followOffset, 0.05f);
         }
+    }
+
+    public void Attack(AttackType attackType)
+    {
+        if (!IsHoldWeapon())
+        {
+            return;
+        }
+        if (!canAttack) return;
+        anim.SetTrigger(Constants.Anim_TriggerAttack);
+        anim.SetInteger(Constants.Anim_IntAttackType, (int)attackType);
+        canAttack = false;
+        Invoke("ResetAttack", attackColdDownDuration);
+    }
+    public void ResetAttack()
+    {
+        canAttack = true;
+    }
+
+    private bool IsHoldWeapon()
+    {
+        Data data = DataManager.Instance.GetData(DataConstraints.IsHavingWeapon);
+        if (data != null && !((Data<bool>)data).value) return true;
+        return false;
     }
     #endregion
 }
