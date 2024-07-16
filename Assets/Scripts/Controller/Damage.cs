@@ -15,10 +15,14 @@ public class Damage : MonoBehaviour
     public string resetPosition;
     public void OnDamage(GameObject[] objects)
     {
-        foreach (var obj in objects)
+        if (objects != null && objects.Length > 0)
         {
-            OnDamage(obj);
+            foreach (var obj in objects)
+            {
+                OnDamage(obj);
+            }
         }
+
     }
     public void OnDamage(GameObject obj)
     {

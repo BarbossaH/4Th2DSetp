@@ -37,15 +37,21 @@ public class PlayerCharacter : MonoBehaviour
     private Transform cameraFollowTarget;
     public Vector3 followOffset;
 
-    PassPlatform currentPlatform;
+    private PassPlatform currentPlatform;
 
-    Damageable playerDamageable;
+    private Damageable playerDamageable;
+    private Damage playerDamage;
+    private AttackRanger attackRanger;
 
     private float gravityScale;
     private string playerSpawnLocation;
 
-    float attackColdDownDuration = 1f;
-    bool canAttack = true;
+    private float attackColdDownDuration = 0.3f;
+    private bool canAttack = true;
+    private float movingXDuration; //when melee attacking, player will move forward a little distance
+    private float movingXSpeed;
+    private float movingXTimer;
+
     #endregion
 
     #region periodic methods
@@ -63,6 +69,8 @@ public class PlayerCharacter : MonoBehaviour
         playerDamageable.OnGetHurt += OnPlayerGetHurt;
         //if InitHp method is called here, there is a potential problem that if the Start method is called before the one inGamePanel, the variable parent won't be found because its start method isn't called yet. So the solution is to call the method of finding the parent in the Awake method in GamePanel class.
         GamePanel.Instance.InitHP(playerDamageable.health);
+        attackRanger = transform.Find("AttackRanger").GetComponent<AttackRanger>();
+        playerDamage = GetComponent<Damage>();
     }
 
     private void OnPlayerGetHurt(HurtType type, string pos)
@@ -141,6 +149,7 @@ public class PlayerCharacter : MonoBehaviour
     {
         CheckPlayerStatus();
         UpdateHorizontalMovement();
+        UpdateMovingXWithTime();
         UpdateJump();
         CheckIsJumping();
         UpdateAnimation();
@@ -166,7 +175,15 @@ public class PlayerCharacter : MonoBehaviour
         // Debug.Log("trigger");
         currentPlatform = null;
     }
-
+    private void OnGenerateDamage()
+    {
+        // Debug.Log("Triggering damage");
+        GameObject[] damageables = attackRanger.GetDamageables();
+        if (damageables != null && damageables.Length > 0)
+        {
+            playerDamage.OnDamage(damageables);
+        }
+    }
     #endregion
     #region private methods
     private void UpdateJump()
@@ -209,14 +226,34 @@ public class PlayerCharacter : MonoBehaviour
 
         if (x < 0)
         {
-            spriteRenderer.flipX = true;
+            transform.localScale = new Vector3(-1, 1, 0);
+            // spriteRenderer.flipX = true;
         }
         else if (x > 0)
         {
-            spriteRenderer.flipX = false;
+            transform.localScale = new Vector3(1, 1, 0);
+            // spriteRenderer.flipX = false;
         }
         if (currentStatus == PlayerStatus.Crouch) x = 0;
         rb.velocity = new Vector2(x, rb.velocity.y);
+    }
+
+    private void SetSeepXWithTime(float x, float time)
+    {
+        movingXDuration = time;
+        movingXSpeed = x;
+        movingXTimer = 0;
+        // rb.velocity = new Vector2(x, rb.velocity.y);
+
+    }
+
+    private void UpdateMovingXWithTime()
+    {
+        movingXTimer += Time.deltaTime;
+        if (movingXTimer < movingXDuration)
+        {
+            rb.velocity = new Vector2(movingXSpeed, rb.velocity.y);
+        }
     }
     private void SetPeedY(float y)
     {
@@ -239,7 +276,7 @@ public class PlayerCharacter : MonoBehaviour
         // }
     }
 
-    public void CheckPlayerStatus()
+    private void CheckPlayerStatus()
     {
         currentStatus = PlayerStatus.Idle;
         if (rb.velocity.x != 0)
@@ -280,7 +317,7 @@ public class PlayerCharacter : MonoBehaviour
     //update target position
     private void UpdateTargetPosition()
     {
-        if (spriteRenderer.flipX)
+        if (transform.localScale.x < 0)
         {
             cameraFollowTarget.position = Vector3.MoveTowards(cameraFollowTarget.position, transform.position - followOffset, 0.05f);
         }
@@ -290,7 +327,7 @@ public class PlayerCharacter : MonoBehaviour
         }
     }
 
-    public void Attack(AttackType attackType)
+    private void Attack(AttackType attackType)
     {
         if (!IsHoldWeapon())
         {
@@ -299,10 +336,12 @@ public class PlayerCharacter : MonoBehaviour
         if (!canAttack) return;
         anim.SetTrigger(Constants.Anim_TriggerAttack);
         anim.SetInteger(Constants.Anim_IntAttackType, (int)attackType);
+        SetSeepXWithTime(transform.localScale.x * 3, 0.3f);
+
         canAttack = false;
         Invoke("ResetAttack", attackColdDownDuration);
     }
-    public void ResetAttack()
+    private void ResetAttack()
     {
         canAttack = true;
     }
